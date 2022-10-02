@@ -28,11 +28,6 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    private void OnTriggerStay(Collider other)
-    {
-        throw new NotImplementedException();
-    }
-
     private void OnCollisionEnter(Collision other)
     {
         Player player = other.gameObject.GetComponent<Player>();
