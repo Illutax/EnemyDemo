@@ -82,7 +82,8 @@ public class Player : MonoBehaviour
         
         takingDamageParticles.Play();
         health = health - amount;
-
+        print("Ouch! Current HP = " + health);
+        
         if (!IsAlive())
         {
             StartCoroutine(GameOver());

@@ -5,7 +5,7 @@ public class EnemySpawner : MonoBehaviour
 {
     public GameObject enemyPrefab;
     
-    private Enemy lastSpawnedEnemy;
+    private Enemy _lastSpawnedEnemy;
 
     void Update()
     {
@@ -19,12 +19,12 @@ public class EnemySpawner : MonoBehaviour
     {
         var positionOfEnemySpawner = transform.position;
         GameObject lastSpawnedGameObject = Instantiate(enemyPrefab, positionOfEnemySpawner, Quaternion.identity);
-        lastSpawnedEnemy = lastSpawnedGameObject.GetComponent<Enemy>();
+        _lastSpawnedEnemy = lastSpawnedGameObject.GetComponent<Enemy>(); // remember reference so we don't spawn more than we want
     }
 
     bool IsLastSpawnedEnemyDead()
     {
-        return lastSpawnedEnemy == null || !lastSpawnedEnemy.IsAlive(); // not (yet) existing or dead
+        return _lastSpawnedEnemy == null || !_lastSpawnedEnemy.IsAlive(); // not (yet) existing or dead
     }
 
     // Just to show the spawner in Scene-View

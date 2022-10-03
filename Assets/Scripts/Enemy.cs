@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using UnityEngine;
 
@@ -9,32 +8,33 @@ public class Enemy : MonoBehaviour
     public float despawnDelay = 2;
     
     // private references
-    private Player player;
-    private Rigidbody rb;
-    private ParticleSystem takingDamageParticles;
+    private Player _player;
+    private Rigidbody _rb;
+    private ParticleSystem _takingDamageParticles;
 
     void Start()
     {
-        rb = GetComponent<Rigidbody>();
-        player = FindObjectOfType<Player>(); // there is only one
-        takingDamageParticles = GetComponent<ParticleSystem>();
+        _rb = GetComponent<Rigidbody>();
+        _player = FindObjectOfType<Player>(); // there is only one
+        _takingDamageParticles = GetComponent<ParticleSystem>();
     }
 
     void Update()
     {
-        if (IsAlive())
-        {
-            WalkToPlayer();
-        }
+        if (!IsAlive()) return;
+        
+        WalkToPlayer();
     }
 
     private void OnCollisionEnter(Collision other)
     {
-        Player player = other.gameObject.GetComponent<Player>();
+        if (!IsAlive()) return;
+        
+        Player possiblePlayer = other.gameObject.GetComponent<Player>();
 
-        if (player != null) // did the enemy touch a player?
+        if (possiblePlayer != null) // did the enemy touch a player?
         {
-            player.TakeDamage(1);
+            this._player.TakeDamage(1);
         }
     }
 
@@ -46,17 +46,17 @@ public class Enemy : MonoBehaviour
     private void WalkToPlayer()
     {
         Vector3 myPosition = transform.position;
-        Vector3 direction = player.transform.position - myPosition;
+        Vector3 direction = _player.transform.position - myPosition;
 
         Vector3 movingDirection = direction.normalized * walkSpeed;
-        rb.velocity = movingDirection;
+        _rb.velocity = movingDirection;
     }
 
     public void TakeDamage(int amount)
     {
         if (!IsAlive()) return; // Don't take damage when dead already
         
-        takingDamageParticles.Play();
+        _takingDamageParticles.Play();
         health = health - amount;
 
         if (!IsAlive())
@@ -67,8 +67,8 @@ public class Enemy : MonoBehaviour
 
     private IEnumerator Die()
     {
-        player.GainXP(100); // talk to player that he killed me
-        yield return new WaitForSeconds(despawnDelay); // wait
+        _player.GainXP(100); // talk to player that he killed me
+        yield return new WaitForSeconds(despawnDelay);
         Despawn();
     }
 

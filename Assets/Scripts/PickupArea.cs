@@ -9,7 +9,7 @@ public class PickupArea : MonoBehaviour
     void OnTriggerEnter(Collider other)
     {
         var player = other.GetComponent<Player>();
-        if (player != null) // did we hit an enemy?
+        if (player != null) // did an player tried to pick it up?
         {
             player.weapon = thisWeapon;
         }
