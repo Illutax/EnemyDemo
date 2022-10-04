@@ -3,11 +3,18 @@ using UnityEngine;
 
 public class Weapon : MonoBehaviour
 {
+    [Header("References")]
     public GameObject damageTrigger;
+    public Animator animator;
+    [Space]
+    
+    [Header("Attack Choreography")]
     public float attackDuration = 0.7f;
     public float attackDelay = 0.5f;
-    public Animator animator;
-    public AudioClip[] sounds;
+    public float applyDamageDelay = 0.2f;
+    
+    [Header("SFX")]
+    public AudioClip[] attackSounds;
 
     private AudioSource _audioSource;
     private double _lastAttackTime;
@@ -21,23 +28,24 @@ public class Weapon : MonoBehaviour
     public void Attack()
     {
         if (Time.time < _lastAttackTime + attackDelay) return;
-
         _lastAttackTime = Time.time;
-        damageTrigger.SetActive(true);
-        
+
+        StartCoroutine(AttackChoreography());
+    }
+
+    private IEnumerator AttackChoreography()
+    {
         animator.SetTrigger("Attack");
-        
+
         _audioSource.clip = RandomAttackSound();
         _audioSource.Play();
-        
-        StartCoroutine(DeactivateDamageTrigger());
-    }
 
-    private AudioClip RandomAttackSound() => sounds[Random.Range(0, sounds.Length)];
-
-    private IEnumerator DeactivateDamageTrigger()
-    {
-        yield return new WaitForSeconds(attackDuration);
+        yield return new WaitForSeconds(applyDamageDelay);
+        damageTrigger.SetActive(true);
+        yield return new WaitForSeconds(attackDuration - applyDamageDelay);
         damageTrigger.SetActive(false);
     }
+
+    private AudioClip RandomAttackSound() => attackSounds[Random.Range(0, attackSounds.Length)];
+
 }

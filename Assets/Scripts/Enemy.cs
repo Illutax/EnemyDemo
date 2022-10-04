@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using UnityEngine;
 
@@ -11,11 +12,14 @@ public class Enemy : MonoBehaviour
     private Player _player;
     private Rigidbody _rb;
     private ParticleSystem _takingDamageParticles;
+    private Collider _collider;
+    private const int EnemyLayer = 6;
 
     void Start()
     {
         _rb = GetComponent<Rigidbody>();
         _player = FindObjectOfType<Player>(); // there is only one
+        _collider = FindObjectOfType<Collider>();
         _takingDamageParticles = GetComponent<ParticleSystem>();
     }
 
@@ -29,12 +33,13 @@ public class Enemy : MonoBehaviour
     private void OnCollisionEnter(Collision other)
     {
         if (!IsAlive()) return;
+        if (other.gameObject.layer == EnemyLayer) Physics.IgnoreCollision(_collider, other.collider);
         
         Player possiblePlayer = other.gameObject.GetComponent<Player>();
 
         if (possiblePlayer != null) // did the enemy touch a player?
         {
-            this._player.TakeDamage(1);
+            _player.TakeDamage(1);
         }
     }
 
