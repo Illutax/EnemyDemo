@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class EnemySpawner : MonoBehaviour
+public class SingleEnemySpawner : MonoBehaviour
 {
     [Header("References")]
     public GameObject enemyPrefab;
@@ -8,9 +8,9 @@ public class EnemySpawner : MonoBehaviour
 
     [Space]
 
-    [Header("Properties")]
+    [Header("Misc")]
     [Min(1)]
-    public int rotationSpeed = 10;
+    public int rotationSpeed = 50;
     
     // internal
     private Enemy _lastSpawnedEnemy;
@@ -46,6 +46,6 @@ public class EnemySpawner : MonoBehaviour
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position, 1);
+        Gizmos.DrawWireSphere(spawnPosition.position, 1);
     }
 }

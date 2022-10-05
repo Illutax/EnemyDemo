@@ -2,24 +2,37 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
+[RequireComponent(typeof(Rigidbody))]
+[RequireComponent(typeof(AudioSource))]
+[RequireComponent(typeof(ParticleSystem))]
 public class Player : MonoBehaviour
 {
+    [Header("References")]
     public Weapon weapon;
+    
+    [Header("Movement")]
     public float moveSpeed = 3;
+    
+    [Header("Stats")]
     public int health = 100;
+    
+    [Header("SFX")]
+    public AudioClip[] hitSounds;
     
     [Space]
     [Header("Only for displaying")]
     public int xp;
     
     // private references
-    private Rigidbody rb;
-    private ParticleSystem takingDamageParticles;
+    private Rigidbody _rb;
+    private AudioSource _audioSource;
+    private ParticleSystem _takingDamageParticles;
 
     void Start()
     {
-        rb = GetComponent<Rigidbody>(); // for movement
-        takingDamageParticles = GetComponent<ParticleSystem>();
+        _rb = GetComponent<Rigidbody>();
+        _audioSource = GetComponent<AudioSource>();
+        _takingDamageParticles = GetComponent<ParticleSystem>();
     }
 
     void Update()
@@ -32,14 +45,9 @@ public class Player : MonoBehaviour
         
         if (Input.GetMouseButtonDown(0))
         {
-            Attack();
+            weapon.Attack();
         }
         Movement();
-    }
-
-    private void Attack()
-    {
-        weapon.Attack();
     }
 
     private void Movement()
@@ -57,7 +65,7 @@ public class Player : MonoBehaviour
 
     private void Walk(Vector3 direction)
     {
-        rb.velocity = direction.normalized * moveSpeed;
+        _rb.velocity = direction.normalized * moveSpeed;
     }
 
     private void Look(Vector3 direction)
@@ -65,7 +73,7 @@ public class Player : MonoBehaviour
         transform.rotation = Quaternion.LookRotation(direction);
     }
 
-    public void GainXP(int amount)
+    public void GainXp(int amount)
     {
         xp = xp + amount;
         print("Current xp " + xp);
@@ -80,14 +88,20 @@ public class Player : MonoBehaviour
     {
         if (!IsAlive()) return; // take no damage when dead already
         
-        takingDamageParticles.Play();
+        PlayRandomHitSound();
+        _takingDamageParticles.Play();
         health = health - amount;
-        print("Ouch! Current HP = " + health);
         
         if (!IsAlive())
         {
             StartCoroutine(GameOver());
         }
+    }
+
+    private void PlayRandomHitSound()
+    {
+        _audioSource.clip = hitSounds[Random.Range(0, hitSounds.Length)];
+        _audioSource.Play();
     }
 
     private IEnumerator GameOver()

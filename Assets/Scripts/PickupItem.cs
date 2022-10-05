@@ -12,7 +12,7 @@ namespace DefaultNamespace
             if (player != null)
             {
                 print("Picked up pickup");
-                player.GainXP(xpAmount);
+                player.GainXp(xpAmount);
                 Destroy(gameObject);
             }
         }
